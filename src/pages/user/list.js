@@ -1,41 +1,45 @@
-import React from "react";
-import ajax from "../../api/ajax";
-import {Link} from "umi";
-import {Button, Space, Table, Tag} from "antd";
-import appCss from "../App.css";
+import React from 'react';
+import ajax from '../../api/ajax';
+import { Link } from 'umi';
+import { Button, Space, Table, Tag } from 'antd';
+import appCss from '../App.css';
 
-export default class UserList  extends React.Component {
+export default class UserList extends React.Component {
   state = {
     data: {},
   };
 
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.getData().then(r => r);
-
+    this.getData().then((r) => r);
   }
 
-  getButton(record){
-    let a=record.key
-    console.log("record")
-    console.log(record)
+  getButton(record) {
+    let a = record.key;
+    console.log('record');
+    console.log(record);
     switch (record.ban) {
       case '0':
-        return<Button type="link" onClick={(e)=>this.closs(a,e)}>封禁用户</Button>
+        return (
+          <Button type="link" onClick={(e) => this.closs(a, e)}>
+            封禁用户
+          </Button>
+        );
       case '-1':
-        return<Button type="link" onClick={(e)=>this.open(a,e)}>解禁用户</Button>
+        return (
+          <Button type="link" onClick={(e) => this.open(a, e)}>
+            解禁用户
+          </Button>
+        );
     }
   }
 
-
-  async getData(){
-    ajax("/api/user/getAll",{},'GET').then(
-      (q)=>{
-        console.log("data")
-        console.log(q)
-        this.setState({"data":q})
-      }
-    )
+  async getData() {
+    ajax('/api/user/getAll', {}, 'GET').then((q) => {
+      console.log('data');
+      console.log(q);
+      this.setState({ data: q });
+    });
   }
 
   render() {
@@ -44,16 +48,18 @@ export default class UserList  extends React.Component {
         title: '用户名称',
         dataIndex: 'name',
         key: 'name',
-        className:"appCss.table-row",
-        render: (text,record,index) => <Link  to={"/index/printer/card?id="+record.key}>{text}</Link>,
+        className: 'appCss.table-row',
+        render: (text, record, index) => (
+          <Link to={'/index/user/card?id=' + record.pkUser}>{text}</Link>
+        ),
       },
       {
         title: '用户组',
         key: 'role',
         dataIndex: 'role',
-        render: tags => (
+        render: (tags) => (
           <>
-            {tags.map(tag => {
+            {tags.map((tag) => {
               let color = 'geekblue';
 
               return (
@@ -64,53 +70,53 @@ export default class UserList  extends React.Component {
             })}
           </>
         ),
-
       },
       {
         title: '用户状态',
         dataIndex: 'ban',
         key: 'ban',
-        render: tag =>
-          {
+        render: (tag) => {
           let color = tag.length > 5 ? 'geekblue' : 'green';
-          let value=""
+          let value = '';
           switch (tag) {
-          case '0':
-            color = 'green'
-            value='正常'
-            break;
-          case '-1':
-            color = 'volcano'
-            value='封禁'
-            break;
+            case '0':
+              color = 'green';
+              value = '正常';
+              break;
+            case '-1':
+              color = 'volcano';
+              value = '封禁';
+              break;
           }
           return (
             <Tag color={color} key={tag}>
               {value}
             </Tag>
           );
-        }
+        },
       },
       {
         title: '操作',
         key: 'action',
-        render: (text, record,index) => (
-          <Space size="middle" >
-            <Link  to={"/index/printer/card?id="+record.key}>详情</Link>
+        render: (text, record, index) => (
+          <Space size="middle">
+            <Link to={'/index/user/card?id=' + record.pkUser}>详情</Link>
             {this.getButton(record)}
           </Space>
         ),
       },
     ];
 
-    return(
+    return (
       <div className={appCss.App}>
-        <Table columns={columns}
-               rowKey={(record) => {
-                 return (record.pkUser + Date.now()) //在这里加上一个时间戳就可以了
-               }}
-               dataSource={this.state.data.obj} />
+        <Table
+          columns={columns}
+          rowKey={(record) => {
+            return record.pkUser + Date.now(); //在这里加上一个时间戳就可以了
+          }}
+          dataSource={this.state.data.obj}
+        />
       </div>
-    )
+    );
   }
 }
