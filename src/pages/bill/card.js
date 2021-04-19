@@ -42,6 +42,8 @@ export default class BillCard extends React.Component {
     });
   }
 
+
+
   renderToolBar() {
     if (this.state.updateMod) {
       return (

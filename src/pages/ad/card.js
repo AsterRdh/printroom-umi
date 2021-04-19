@@ -30,15 +30,28 @@ export default class AdCard  extends React.Component {
     this.getData().then()
   }
 
+  save=()=>{
+    let a=this.formRef.current.getFieldsValue()
+    console.log("this.state.data")
+    console.log(this.state.data)
+    a.id=this.state.data.obj.pkAd
+    ajax("/api/ad/save",a,'POST').then(response =>
+      {
+        this.setState({"updateMod":false})
+        this.getData().then()
+      }
+    )
+
+  }
+
+
+
   async getData(){
     let id=this.props.location.query.id
     ajax("/api/ad/getOne",{id},'GET').then(
       (q)=>{
-        console.log("q")
-        console.log(q)
         q.obj.dateRange[0]= moment(q.obj.dateRange[0]);
         q.obj.dateRange[1]= moment(q.obj.dateRange[1]);
-        console.log(q.obj.dateRange)
         this.setState({"data":q,imageURL:q.obj.src})
         if(this.formRef.current){
           this.formRef.current.setFieldsValue(q.obj)
@@ -101,14 +114,19 @@ export default class AdCard  extends React.Component {
 
   render() {
 
-
+    const normFile = (e) => {
+      console.log('Upload event:', e);
+      if (Array.isArray(e)) {
+        return e;
+      }
+      return e && e.fileList;
+    };
 
     return(
       <div>
         {this.renderToolBar()}
         <div className={"mid-box"}>
-          <Row>
-            <Col flex="3" >
+
               <div className={"card-form"} >
                 <Form
                   ref={this.formRef}
@@ -116,129 +134,145 @@ export default class AdCard  extends React.Component {
                   wrapperCol={{ span: 19 }}
                   layout="horizontal"
                   initialValues={this.state.dataf}
+
                 >
-                  <Form.Item
-                    name="name"
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <Input size="large" bordered={false} style={{"color": "#ffffff",fontSize:24}} disabled={!this.state.updateMod}/>
+                  <Row>
+                    <Col flex="3" >
+                  <Form.Item>
+                    <Form.Item
+                      name="name"
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <Input size="large" bordered={false} style={{"color": "#ffffff",fontSize:24}} disabled={!this.state.updateMod}/>
 
+                    </Form.Item>
+                    <Form.Item
+                      name="state"
+                      colon={false}
+                      label={<div className={"input-text"}>广告状态</div>}
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <Select disabled={!this.state.updateMod}>
+                        <Option value="-1">已关闭</Option>
+                        <Option value="0">启用</Option>
+                        <Option value="1">审批中</Option>
+                      </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                      name="supplier"
+                      colon={false}
+                      label={<div className={"input-text"}>供应商</div>}
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    >
+                      <Input bordered={true}style={{"color": "#ffffff",backgroundColor:"#2b2b2b",borderColor:"#434343"}} disabled={!this.state.updateMod}/>
+                    </Form.Item>
+
+                    <Form.Item
+                      name="dateRange"
+                      colon={false}
+                      label={<div className={"input-text"}>有效时间</div>}
+                      rules={[
+                        {
+                          type: 'array',
+                          required: true,
+                          message: 'Please select time!',
+                        },
+                      ]}
+                    >
+                      <RangePicker/>
+                    </Form.Item>
+                    <Divider orientation="left" plain>审核信息</Divider>
+                    <Form.Item
+                      name="charge"
+                      colon={false}
+                      label={<div className={"input-text"}>负责人</div>}
+                      rules={[
+                        {
+
+                        },
+                      ]}
+                    >
+                      <Input bordered={true}style={{"color": "#ffffff",backgroundColor:"#2b2b2b",borderColor:"#434343"}} disabled={!this.state.updateMod}/>
+                    </Form.Item>
+
+                    <Form.Item
+                      name="approver"
+                      colon={false}
+                      label={<div className={"input-text"}>审批人</div>}
+                      rules={[
+                        {
+
+                        },
+                      ]}
+                    >
+                      <Input bordered={true}style={{"color": "#ffffff",backgroundColor:"#2b2b2b",borderColor:"#434343"}} disabled={!this.state.updateMod}/>
+                    </Form.Item>
+
+                    <Form.Item
+                      name="approvalTime"
+                      colon={false}
+                      label={<div className={"input-text"}>审批时间</div>}
+                      rules={[
+                        {
+
+                        },
+                      ]}
+                    >
+                      <DatePicker/>
+                    </Form.Item>
                   </Form.Item>
-                  <Form.Item
-                    name="state"
-                    colon={false}
-                    label={<div className={"input-text"}>广告状态</div>}
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <Select disabled={!this.state.updateMod}>
-                      <Option value="-1">已关闭</Option>
-                      <Option value="0">启用</Option>
-                      <Option value="1">审批中</Option>
-                    </Select>
-                  </Form.Item>
+                    </Col>
+                    <Col flex="2">
+                      <div className={"map-box"}>
+                        <Form.Item
+                          name="src"
+                          valuePropName="file"
+                          getValueFromEvent={normFile}
+                          noStyle
+                        >
+                          <Dragger
+                            name={'file'}
+                            multiple = {false}
+                            action= 'http://127.0.0.1:8080/PrintRoom/api/file/upload'
+                            onChange={this.dragger}
+                            maxCount={1}
+                            disabled={!this.state.updateMod}
+                          >
+                            <div style={{backgroundImage:"url("+this.state.imageURL+")"}} className={"upload-image-box"}>
+                              <div className={"upload-text-box"}>
+                                <p className="ant-upload-drag-icon">
+                                  <InboxOutlined />
+                                </p>
+                                <p className="ant-upload-text">点击或将图片拖拽到这里</p>
+                                <p className="ant-upload-hint">
+                                  支持单次上传，图片大小小于 50MB
+                                </p>
+                              </div>
+                            </div>
+                          </Dragger>
+                        </Form.Item>
+                      </div>
+                    </Col>
+                  </Row>
 
-                  <Form.Item
-                    name="supplier"
-                    colon={false}
-                    label={<div className={"input-text"}>供应商</div>}
-                    rules={[
-                      {
-                        required: true,
-                      },
-                    ]}
-                  >
-                    <Input bordered={true}style={{"color": "#ffffff",backgroundColor:"#2b2b2b",borderColor:"#434343"}} disabled={!this.state.updateMod}/>
-                  </Form.Item>
-
-                  <Form.Item
-                    name="dateRange"
-                    colon={false}
-                    label={<div className={"input-text"}>有效时间</div>}
-                    rules={[
-                      {
-                        type: 'array',
-                        required: true,
-                        message: 'Please select time!',
-                      },
-                    ]}
-                  >
-                    <RangePicker/>
-                  </Form.Item>
-                  <Divider orientation="left" plain>审核信息</Divider>
-                  <Form.Item
-                    name="charge"
-                    colon={false}
-                    label={<div className={"input-text"}>负责人</div>}
-                    rules={[
-                      {
-
-                      },
-                    ]}
-                  >
-                    <Input bordered={true}style={{"color": "#ffffff",backgroundColor:"#2b2b2b",borderColor:"#434343"}} disabled={!this.state.updateMod}/>
-                  </Form.Item>
-
-                  <Form.Item
-                    name="approver"
-                    colon={false}
-                    label={<div className={"input-text"}>审批人</div>}
-                    rules={[
-                      {
-
-                      },
-                    ]}
-                  >
-                    <Input bordered={true}style={{"color": "#ffffff",backgroundColor:"#2b2b2b",borderColor:"#434343"}} disabled={!this.state.updateMod}/>
-                  </Form.Item>
-
-                  <Form.Item
-                    name="approvalTime"
-                    colon={false}
-                    label={<div className={"input-text"}>审批时间</div>}
-                    rules={[
-                      {
-
-                      },
-                    ]}
-                  >
-                    <DatePicker/>
-                  </Form.Item>
                 </Form>
               </div>
-            </Col>
-            <Col flex="2">
-              <div className={"map-box"}>
-                <Dragger
-                  name={'file'}
-                  multiple = {false}
-                  action= 'http://127.0.0.1:8080/PrintRoom/api/file/upload'
-                  onChange={this.dragger}
-                  maxCount={1}
-                  disabled={!this.state.updateMod}
-                >
-                  <div style={{backgroundImage:"url("+this.state.imageURL+")"}} className={"upload-image-box"}>
-                    <div className={"upload-text-box"}>
-                      <p className="ant-upload-drag-icon">
-                        <InboxOutlined />
-                      </p>
-                      <p className="ant-upload-text">点击或将图片拖拽到这里</p>
-                      <p className="ant-upload-hint">
-                        支持单次上传，图片大小小于 50MB
-                      </p>
-                    </div>
-                  </div>
-                </Dragger>
-              </div>
-            </Col>
-          </Row>
+
+
+
         </div>
       </div>
     )
