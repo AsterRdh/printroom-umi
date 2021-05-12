@@ -115,7 +115,7 @@ export default class BillList extends React.Component {
         key: 'action',
         render: (text, record, index) => (
           <Space size="middle">
-            <Link to={'/index/bill/card?id=' + record.pkBill}>详情</Link>
+            {/*<Link to={'/index/bill/card?id=' + record.pkBill}>详情</Link>*/}
           </Space>
         ),
       },

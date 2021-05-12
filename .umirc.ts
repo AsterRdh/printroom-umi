@@ -3,10 +3,10 @@ import { defineConfig } from 'umi';
 export default defineConfig({
   proxy: {
     '/api': {
-      target: 'http://localhost:8080/PrintRoom',
+      target: 'http://39.107.232.66:8080/PrintRoom',
       pathRewrite: { '^/api': '' },
-      changeOrigin: true
-    }
+      changeOrigin: true,
+    },
   },
   antd: {
     dark: true,
@@ -17,8 +17,10 @@ export default defineConfig({
   },
   routes: [
     { path: '/', component: '@/pages/App' },
-    { path:'/test',component:'@/pages/TestPage'},
-    { path: '/index', component: '@/pages/Home',
+    { path: '/test', component: '@/pages/TestPage' },
+    {
+      path: '/index',
+      component: '@/pages/Home',
       routes: [
         {
           path: '/index/',
@@ -36,7 +38,7 @@ export default defineConfig({
               path: '/index/printer/card',
               component: '@/pages/printers/card',
             },
-          ]
+          ],
         },
         {
           path: '/index/bill',
@@ -50,7 +52,7 @@ export default defineConfig({
               path: '/index/bill/card',
               component: '@/pages/bill/card',
             },
-          ]
+          ],
         },
         {
           path: '/index/ad',
@@ -64,7 +66,7 @@ export default defineConfig({
               path: '/index/ad/card',
               component: '@/pages/ad/card',
             },
-          ]
+          ],
         },
         {
           path: '/index/user',
@@ -78,9 +80,9 @@ export default defineConfig({
               path: '/index/user/card',
               component: '@/pages/user/card',
             },
-          ]
+          ],
         },
-      ]
+      ],
     },
   ],
   fastRefresh: {},
