@@ -31,7 +31,10 @@ class LoginPage extends React.Component {
     ).then();
     if (result.status == 'success') {
       debugger;
-      cookie.save('JSESSIONID', result.msg);
+      cookie.save('JSESSIONID', result.msg.JSESSIONID);
+      cookie.save('userName', result.msg.userName);
+      cookie.save('userId', result.msg.userId);
+      cookie.save('userRule', result.msg.userRule);
       history.push('/index');
     } else {
     }

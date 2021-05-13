@@ -1,5 +1,6 @@
 import { defineConfig } from 'umi';
-
+//target: 'http://39.107.232.66:8080/PrintRoom',
+//target: 'http://127.0.0.1:8080/PrintRoom',
 export default defineConfig({
   proxy: {
     '/api': {
